@@ -1,5 +1,5 @@
 /*
- * Copyright © Progmasters (QTC Kft.), 2016.
+ * Copyright © Progmasters (QTC Kft.), 2016-2018.
  * All rights reserved. No part or the whole of this Teaching Material (TM) may be reproduced, copied, distributed, 
  * publicly performed, disseminated to the public, adapted or transmitted in any form or by any means, including 
  * photocopying, recording, or other electronic or mechanical methods, without the prior written permission of QTC Kft. 
