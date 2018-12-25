@@ -17,20 +17,17 @@ import com.progmasters.mordor.domain.Orc;
 import com.progmasters.mordor.domain.OrcRaceType;
 import com.progmasters.mordor.dto.OrcListItem;
 import com.progmasters.mordor.service.OrcService;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -41,13 +38,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = {SpringWebConfig.class, OrcControllerTest.TestConfiguration.class})
 public class OrcControllerTest {
@@ -60,17 +56,16 @@ public class OrcControllerTest {
     @Autowired
     OrcService orcServiceMock;
 
-    @Before
+    @BeforeEach
     public void setup() {
-//        MockitoAnnotations.initMocks(this);
         Mockito.reset(orcServiceMock);
 
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
     }
 
-    @After
+    @AfterEach
     public void validate() {
-//        validateMockitoUsage();
+        validateMockitoUsage();
     }
 
     @Test
@@ -97,8 +92,8 @@ public class OrcControllerTest {
                 .andExpect(jsonPath("$[1].name", is("Urgarok")))
                 .andExpect(jsonPath("$[1].orcRaceType", is("Uruk")));
 
-        verify(orcServiceMock).listOrcs();
-//        verifyNoMoreInteractions(orcServiceMock);
+        verify(orcServiceMock, times(1)).listOrcs();
+        verifyNoMoreInteractions(orcServiceMock);
     }
 
     @Configuration

@@ -16,12 +16,12 @@ import com.progmasters.mordor.domain.OrcRaceType;
 import com.progmasters.mordor.domain.WeaponType;
 import com.progmasters.mordor.dto.OrcDetails;
 import com.progmasters.mordor.repository.OrcRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -33,7 +33,7 @@ public class OrcServiceTest {
 
     private OrcRepository orcRepositoryMock;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         orcRepositoryMock = mock(OrcRepository.class);
         orcService = new OrcService(orcRepositoryMock);
@@ -50,6 +50,7 @@ public class OrcServiceTest {
         OrcDetails orcDetails = new OrcDetails(orc);
 
         when(orcRepositoryMock.save(any(Orc.class))).thenAnswer(returnsFirstArg());
+        //when(orcRepositoryMock.findOne(any(Long.class))).thenReturn(new Orc());
 
         Orc savedOrc = orcService.saveOrc(orcDetails);
 

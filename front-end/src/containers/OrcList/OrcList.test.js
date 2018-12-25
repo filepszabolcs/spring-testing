@@ -6,7 +6,7 @@ import OrcList from './OrcList';
 
 configure({adapter: new Adapter()});
 
-describe('<OrcList />', () => {
+describe('test <OrcList /> component', () => {
 
     let wrapper;
 

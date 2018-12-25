@@ -43,7 +43,7 @@ public class OrcService {
     }
 
     public Orc updateOrc(OrcDetails orcDetails, Long id) {
-        Orc orc = orcRepository.findOne(id);
+        Orc orc = orcRepository.findById(id).get();
         if (orc != null) {
             updateValues(orcDetails, orc);
         }
@@ -60,7 +60,7 @@ public class OrcService {
     }
 
     public OrcDetails getOrcDetails(Long id) {
-        Orc orc = orcRepository.findOne(id);
+        Orc orc = orcRepository.findById(id).get();
         return new OrcDetails(orc);
     }
 
@@ -73,11 +73,11 @@ public class OrcService {
      * Return true if deletion is successful
      */
     public boolean deleteOrc(Long id) {
-        Orc orc = orcRepository.findOne(id);
+        Orc orc = orcRepository.findById(id).get();
 
         boolean result = false;
         if (orc != null) {
-            orcRepository.delete(id);
+            orcRepository.deleteById(id);
             result = true;
         }
 

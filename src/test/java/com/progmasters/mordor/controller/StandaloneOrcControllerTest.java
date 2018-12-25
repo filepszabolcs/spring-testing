@@ -19,13 +19,13 @@ import com.progmasters.mordor.dto.OrcDetails;
 import com.progmasters.mordor.dto.OrcListItem;
 import com.progmasters.mordor.exception.GlobalExceptionHandler;
 import com.progmasters.mordor.service.OrcService;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
@@ -45,7 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class StandaloneOrcControllerTest {
 
     private MockMvc mockMvc;
@@ -56,14 +56,14 @@ public class StandaloneOrcControllerTest {
     @InjectMocks
     private OrcController orcController;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(orcController)
                 .setControllerAdvice(new GlobalExceptionHandler(messageSource()))
                 .build();
     }
 
-    @After
+    @AfterEach
     public void validate() {
         validateMockitoUsage();
     }

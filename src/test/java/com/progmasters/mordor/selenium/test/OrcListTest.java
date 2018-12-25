@@ -2,18 +2,20 @@ package com.progmasters.mordor.selenium.test;
 
 import com.progmasters.mordor.selenium.environment.EnvironmentManager;
 import com.progmasters.mordor.selenium.environment.RunEnvironment;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class OrcListTest {
 
-    @Before
+    @BeforeEach
     public void startBrowser() {
         EnvironmentManager.initWebDriver();
     }
@@ -21,6 +23,8 @@ public class OrcListTest {
     @Test
     public void demo() {
         WebDriver driver = RunEnvironment.getWebDriver();
+
+
         driver.get("http://localhost:3000/orcList");
 
         driver.findElement(By.cssSelector("button.navbar-toggler")).click();
@@ -28,15 +32,16 @@ public class OrcListTest {
         String title = driver.findElement(By.cssSelector("div.jumbotron h3")).getAttribute("innerHTML");
         assertEquals(title, "Orc form");
 
+        //driver.findElement(By.cssSelector("button.navbar-toggler")).click();
         driver.findElement(By.cssSelector("input[name='name']")).sendKeys("Dwarf slayer");
         driver.findElement(By.cssSelector("input[name='killCount']")).sendKeys("10");
         new Select(driver.findElement(By.cssSelector("select[name='raceType']"))).selectByVisibleText("Uruk");
         driver.findElement(By.cssSelector("input[name='weapons'][value='BOW'")).click();
         driver.findElement(By.cssSelector("input[name='weapons'][value='SHIELD'")).click();
 
-        //WebDriverWait wait = new WebDriverWait(driver, 30);
+        WebDriverWait wait = new WebDriverWait(driver, 30);
         try {
-            Thread.sleep(1000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -51,9 +56,16 @@ public class OrcListTest {
 
         String listPageTitle = driver.findElement(By.cssSelector("div.jumbotron h3")).getAttribute("innerHTML");
         assertEquals(listPageTitle, "Orc list");
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         EnvironmentManager.shutDownDriver();
     }
