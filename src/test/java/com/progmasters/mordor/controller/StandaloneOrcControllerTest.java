@@ -70,6 +70,7 @@ public class StandaloneOrcControllerTest {
 
     @Test
     public void testGetOrcList() throws Exception {
+        // given
         Orc orc1 = new Orc();
         orc1.setName("Varag");
         orc1.setOrcRaceType(OrcRaceType.MOUNTAIN);
@@ -82,8 +83,10 @@ public class StandaloneOrcControllerTest {
         List<OrcListItem> orcs = Arrays.asList(orc1, orc2).stream()
                 .map(OrcListItem::new).collect(Collectors.toList());
 
+        // when
         when(orcServiceMock.listOrcs()).thenReturn(orcs);
 
+        // then
         this.mockMvc.perform(get("/api/orcs"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))

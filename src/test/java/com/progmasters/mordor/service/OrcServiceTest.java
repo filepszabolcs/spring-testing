@@ -41,6 +41,7 @@ public class OrcServiceTest {
 
     @Test
     public void testSavingOrc() {
+        // given
         Orc orc = new Orc();
         orc.setName("Varag");
         orc.setOrcRaceType(OrcRaceType.MOUNTAIN);
@@ -49,11 +50,13 @@ public class OrcServiceTest {
 
         OrcDetails orcDetails = new OrcDetails(orc);
 
+        // when
         when(orcRepositoryMock.save(any(Orc.class))).thenAnswer(returnsFirstArg());
         //when(orcRepositoryMock.findOne(any(Long.class))).thenReturn(new Orc());
 
         Orc savedOrc = orcService.saveOrc(orcDetails);
 
+        // then
         assertEquals(orc.getName(), savedOrc.getName());
         assertEquals(orc.getOrcRaceType(), savedOrc.getOrcRaceType());
         assertEquals(orc.getWeapons(), savedOrc.getWeapons());
