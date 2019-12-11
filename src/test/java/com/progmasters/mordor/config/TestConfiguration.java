@@ -58,5 +58,4 @@ public class TestConfiguration {
         properties.put("hibernate.dialect", "org.hibernate.dialect.HSQLDialect");
         return properties;
     }
-
 }

@@ -89,7 +89,7 @@ public class StandaloneOrcControllerTest {
         // then
         this.mockMvc.perform(get("/api/orcs"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].name", is("Varag")))
                 .andExpect(jsonPath("$[0].orcRaceType", is("Mountain")))
@@ -115,7 +115,7 @@ public class StandaloneOrcControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(orcDetails)))
                 .andExpect(status().is(400))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.fieldErrors", hasSize(1)))
                 .andExpect(jsonPath("$.fieldErrors[0].field", is("killCount")))
                 .andExpect(jsonPath("$.fieldErrors[0].message", is("Orcs must retire after killing half a million enemies")));

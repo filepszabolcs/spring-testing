@@ -27,7 +27,7 @@ public class OrcListTest {
 
         driver.get("http://localhost:3000/orcList");
 
-        driver.findElement(By.cssSelector("button.navbar-toggler")).click();
+        //driver.findElement(By.cssSelector("button.navbar-toggler")).click();
         driver.findElement(By.cssSelector("a[href='/orcForm']")).click();
         String title = driver.findElement(By.cssSelector("div.jumbotron h3")).getAttribute("innerHTML");
         assertEquals(title, "Orc form");
