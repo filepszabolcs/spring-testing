@@ -55,6 +55,26 @@ public class OrcDetails {
         return killCount;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setRaceType(String raceType) {
+        this.raceType = raceType;
+    }
+
+    public void setKillCount(Long killCount) {
+        this.killCount = killCount;
+    }
+
+    public void setWeapons(List<String> weapons) {
+        this.weapons = weapons;
+    }
+
     public List<String> getWeapons() {
         return weapons;
     }

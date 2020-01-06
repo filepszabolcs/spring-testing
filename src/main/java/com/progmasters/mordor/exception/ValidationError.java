@@ -14,29 +14,29 @@ package com.progmasters.mordor.exception;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ValidationErrorDTO {
-    private List<FieldErrorDTO> fieldErrors = new ArrayList<>();
+public class ValidationError {
+    private List<CustomFieldError> fieldErrors = new ArrayList<>();
 
-    public void addFieldError(String path, String message) {
-        FieldErrorDTO error = new FieldErrorDTO(path, message);
+    void addFieldError(String field, String message) {
+        CustomFieldError error = new CustomFieldError(field, message);
         fieldErrors.add(error);
     }
 
-    public List<FieldErrorDTO> getFieldErrors() {
+    public List<CustomFieldError> getFieldErrors() {
         return fieldErrors;
     }
 
-    public void setFieldErrors(List<FieldErrorDTO> fieldErrors) {
-        this.fieldErrors = fieldErrors;
+    public void setFieldErrors(List<CustomFieldError> customFieldErrors) {
+        this.fieldErrors = customFieldErrors;
     }
 
-    public static class FieldErrorDTO {
+
+    private static class CustomFieldError {
 
         private String field;
-
         private String message;
 
-        public FieldErrorDTO(String field, String message) {
+        CustomFieldError(String field, String message) {
             this.field = field;
             this.message = message;
         }

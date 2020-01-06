@@ -11,22 +11,22 @@
 
 package com.progmasters.mordor.dto;
 
-import java.util.Map;
+import java.util.List;
 
 public class OrcFormData {
-    private Map<String, String> weapons;
-    private Map<String, String> raceTypes;
+    private List<WeaponOption> weapons;
+    private List<OrcRaceTypeOption> raceTypes;
 
-    public OrcFormData(Map<String, String> weapons, Map<String, String> raceTypes) {
+    public OrcFormData(List<WeaponOption> weapons, List<OrcRaceTypeOption> raceTypes) {
         this.weapons = weapons;
         this.raceTypes = raceTypes;
     }
 
-    public Map<String, String> getWeapons() {
+    public List<WeaponOption> getWeapons() {
         return weapons;
     }
 
-    public Map<String, String> getRaceTypes() {
+    public List<OrcRaceTypeOption> getRaceTypes() {
         return raceTypes;
     }
 

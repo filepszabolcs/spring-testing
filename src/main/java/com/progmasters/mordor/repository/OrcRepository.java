@@ -20,5 +20,7 @@ import java.util.List;
 @Repository
 public interface OrcRepository extends JpaRepository<Orc, Long> {
     List<Orc> findByOrderByKillCountDesc();
+
+    List<Orc> findAllByName(String name);
 }
 

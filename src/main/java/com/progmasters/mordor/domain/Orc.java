@@ -14,6 +14,7 @@ package com.progmasters.mordor.domain;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "orc")
@@ -107,7 +108,7 @@ public class Orc {
 
         Orc orc = (Orc) o;
 
-        return id != null ? id.equals(orc.id) : orc.id == null;
+        return Objects.equals(id, orc.id);
     }
 
     @Override

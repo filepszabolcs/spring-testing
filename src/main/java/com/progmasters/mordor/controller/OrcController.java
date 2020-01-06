@@ -24,56 +24,54 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/orcs")
 public class OrcController {
 
     private final OrcService orcService;
+    private final OrcDetailsValidator validator;
 
     @Autowired
-    public OrcController(OrcService orcService) {
+    public OrcController(OrcService orcService, OrcDetailsValidator validator) {
         this.orcService = orcService;
+        this.validator = validator;
     }
 
-    @InitBinder
+    @InitBinder("orcDetails")
     protected void initBinder(WebDataBinder binder) {
-        binder.addValidators(new OrcDetailsValidator());
+        binder.addValidators(validator);
     }
 
     @GetMapping("/formData")
     public ResponseEntity<OrcFormData> getOrcFormData() {
-        OrcFormData formData = new OrcFormData(getWeaponTypes(), getOrcRaceTypes());
+        OrcFormData formData = new OrcFormData(getWeaponOptions(), getOrcRaceTypes());
         return new ResponseEntity<>(formData, HttpStatus.OK);
     }
 
-    private Map<String, String> getWeaponTypes() {
-        Map<String, String> weaponTypeMap = new LinkedHashMap<>();
+    private List<WeaponOption> getWeaponOptions() {
+        List<WeaponOption> weaponOptions = new ArrayList<>();
         for (WeaponType weaponType : WeaponType.values()) {
-            weaponTypeMap.put(weaponType.name(), weaponType.getDisplayName());
+            weaponOptions.add(new WeaponOption(weaponType));
         }
-
-        return weaponTypeMap;
+        return weaponOptions;
     }
 
-    private Map<String, String> getOrcRaceTypes() {
-        Map<String, String> orcRaceTypeMap = new LinkedHashMap<>();
+    private List<OrcRaceTypeOption> getOrcRaceTypes() {
+        List<OrcRaceTypeOption> orcRaceTypeOptions = new ArrayList<>();
         for (OrcRaceType orcRaceType : OrcRaceType.values()) {
-            orcRaceTypeMap.put(orcRaceType.name(), orcRaceType.getDisplayName());
+            orcRaceTypeOptions.add(new OrcRaceTypeOption(orcRaceType));
         }
-
-        return orcRaceTypeMap;
+        return orcRaceTypeOptions;
     }
 
     @GetMapping
     public ResponseEntity<List<OrcListItem>> getOrcs() {
-
         return new ResponseEntity<>(orcService.listOrcs(), HttpStatus.OK);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<OrcDetails> getOrc(@PathVariable Long id) {
@@ -81,7 +79,7 @@ public class OrcController {
     }
 
     @PostMapping
-    public ResponseEntity<?> saveOrc(@Valid @RequestBody OrcDetails orcDetails) {
+    public ResponseEntity saveOrc(@Valid @RequestBody OrcDetails orcDetails) {
         orcService.saveOrc(orcDetails);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -102,12 +100,12 @@ public class OrcController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteOrc(@PathVariable Long id) {
+    public ResponseEntity<List<OrcListItem>> deleteOrc(@PathVariable Long id) {
         boolean isDeleteSuccessful = orcService.deleteOrc(id);
 
-        ResponseEntity<?> result;
+        ResponseEntity<List<OrcListItem>> result;
         if (isDeleteSuccessful) {
-            result = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            result = new ResponseEntity<>(orcService.listOrcs(), HttpStatus.OK);
         } else {
             result = new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

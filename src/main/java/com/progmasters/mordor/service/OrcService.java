@@ -11,22 +11,27 @@
 
 package com.progmasters.mordor.service;
 
-import com.progmasters.mordor.repository.OrcRepository;
 import com.progmasters.mordor.domain.Orc;
 import com.progmasters.mordor.domain.OrcRaceType;
 import com.progmasters.mordor.domain.WeaponType;
-import com.progmasters.mordor.dto.OrcListItem;
 import com.progmasters.mordor.dto.OrcDetails;
+import com.progmasters.mordor.dto.OrcListItem;
+import com.progmasters.mordor.repository.OrcRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class OrcService {
+
+    private static final Logger logger = LoggerFactory.getLogger(OrcService.class);
 
     private OrcRepository orcRepository;
 
@@ -43,25 +48,32 @@ public class OrcService {
     }
 
     public Orc updateOrc(OrcDetails orcDetails, Long id) {
-        Orc orc = orcRepository.findById(id).get();
-        if (orc != null) {
+        Optional<Orc> orcOptional = orcRepository.findById(id);
+        if (orcOptional.isPresent()) {
+            Orc orc = orcOptional.get();
             updateValues(orcDetails, orc);
+            orcRepository.save(orc);
+            return orc;
+        } else {
+            return null;
         }
-
-        return orc;
     }
 
     private void updateValues(OrcDetails orcDetails, Orc orc) {
         orc.setName(orcDetails.getName());
         orc.setOrcRaceType(OrcRaceType.valueOf(orcDetails.getRaceType()));
-        orc.setKillCount(orcDetails.getKillCount());
+        orc.setKillCount(orcDetails.getKillCount() == null ? 0 : orcDetails.getKillCount());
         orc.setWeapons(orcDetails.getWeapons().stream()
                 .map(WeaponType::valueOf).collect(Collectors.toList()));
     }
 
     public OrcDetails getOrcDetails(Long id) {
-        Orc orc = orcRepository.findById(id).get();
-        return new OrcDetails(orc);
+        OrcDetails orcDetails = null;
+        Optional<Orc> orcOptional = orcRepository.findById(id);
+        if (orcOptional.isPresent()) {
+            orcDetails = new OrcDetails(orcOptional.get());
+        }
+        return orcDetails;
     }
 
     public List<OrcListItem> listOrcs() {
@@ -73,11 +85,11 @@ public class OrcService {
      * Return true if deletion is successful
      */
     public boolean deleteOrc(Long id) {
-        Orc orc = orcRepository.findById(id).get();
-
         boolean result = false;
-        if (orc != null) {
-            orcRepository.deleteById(id);
+        Optional<Orc> orcOptional = orcRepository.findById(id);
+        if (orcOptional.isPresent()) {
+            Orc orc = orcOptional.get();
+            orcRepository.delete(orc);
             result = true;
         }
 
