@@ -1,0 +1,139 @@
+<div>
+    <h3>Orc form</h3>
+    <hr/>
+    <form [formGroup]="orcForm">
+        <div class="form-group">
+            <label
+                for="name"
+                class="form-control-label"
+                [ngClass]="{
+                    'text-danger': orcForm.get('name').invalid && orcForm.get('name').touched || orcForm.get('name').errors?.serverError
+                }"
+            >
+                Orc name:
+            </label>
+            <input
+                type="text"
+                id="name"
+                formControlName="name"
+                name="name"
+                placeholder="Orc name"
+                class="form-control"
+                [ngClass]="{
+                        'is-invalid': orcForm.get('name').invalid && orcForm.get('name').touched || orcForm.get('name').errors?.serverError
+                    }"
+            />
+            <small
+                *ngIf="orcForm.get('name').invalid
+                        && orcForm.get('name').touched
+                        && !orcForm.get('name').errors?.serverError"
+                class="text-danger"
+            >
+                Please enter an orc name
+            </small>
+            <small *ngIf="orcForm.get('name').errors?.serverError" class="text-danger">
+                {{orcForm.get('name').errors['serverError']}}
+            </small>
+        </div>
+
+        <div class="form-group">
+            <label
+                for="killCount"
+                class="form-control-label"
+                [ngClass]="{
+                        'text-danger': orcForm.get('killCount').invalid && orcForm.get('killCount').touched || orcForm.get('killCount').errors?.serverError
+                    }"
+            >
+                Kill count:
+            </label>
+            <input
+                type="number"
+                id="killCount"
+                formControlName="killCount"
+                name="killCount"
+                class="form-control"
+                [ngClass]="{
+                        'is-invalid': orcForm.get('killCount').invalid && orcForm.get('killCount').touched || orcForm.get('killCount').errors?.serverError
+                    }"
+            />
+            <small
+                class="text-danger"
+                *ngIf="orcForm.get('killCount').invalid && orcForm.get('killCount').touched && !orcForm.get('killCount').errors?.serverError"
+            >
+                Please enter a number between 0 and 500
+            </small>
+            <small
+                *ngIf="orcForm.get('killCount').errors?.serverError"
+                class="text-danger"
+            >
+                {{orcForm.get('killCount').errors['serverError']}}
+            </small>
+        </div>
+
+        <div class="form-group">
+            <label
+                for="raceType"
+                class="form-control-label"
+                [ngClass]="{
+                        'text-danger': orcForm.get('raceType').invalid && orcForm.get('raceType').touched || orcForm.get('raceType').errors?.serverError
+                    }"
+            >
+                Race:
+            </label>
+            <select
+                id="raceType"
+                formControlName="raceType"
+                name="raceType"
+                class="form-control"
+                [ngClass]="{
+                        'is-invalid': orcForm.get('raceType').invalid && orcForm.get('raceType').touched || orcForm.get('raceType').errors?.serverError
+                    }"
+            >
+                <option value="" disabled>&#45;&#45; Please choose a race &#45;&#45;</option>
+                <option *ngFor="let raceType of raceTypes, let i = index"
+                        value="{{raceType.name}}">{{raceType.displayName}}</option>
+            </select>
+            <small
+                class="text-danger"
+                *ngIf="orcForm.get('raceType').invalid && orcForm.get('raceType').touched && !orcForm.get('raceType').errors?.serverError"
+            >
+                Please choose a race
+            </small>
+            <small
+                *ngIf="orcForm.get('raceType').errors?.serverError"
+                class="text-danger"
+            >
+                {{orcForm.get('raceType').errors['serverError']}}
+            </small>
+        </div>
+
+        <div class="form-group">
+            <label
+                class="form-control-label"
+                [ngClass]="{
+                    'text-danger': orcForm.get('weapons').invalid && orcForm.get('weapons').touched || orcForm.get('weapons').errors?.serverError
+                }"
+            >
+                Weapons:
+            </label>
+            <div formArrayName="weapons" *ngFor="let weapon of weaponOptions; let i = index">
+                <label>
+                    <input type="checkbox" [formControlName]="i">
+                    {{ weapon.displayName }}
+                </label>
+            </div>
+            <small
+                *ngIf="orcForm.get('weapons').invalid && orcForm.get('weapons').touched && !orcForm.get('weapons').errors?.serverError"
+                class="text-danger"
+            >
+                Please don't choose more than three weapons
+            </small>
+            <small
+                *ngIf="orcForm.get('weapons').errors?.serverError"
+                class="text-danger">
+                {{orcForm.get('weapons').errors?.serverError}}
+            </small>
+        </div>
+        <button type="submit" class="btn btn-success" (click)="onSubmit()">Submit</button>
+    </form>
+</div>
