@@ -11,57 +11,62 @@
 
 package com.progmasters.mordor.controller;
 
-
-import com.progmasters.mordor.config.SpringWebConfig;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.progmasters.mordor.domain.Orc;
 import com.progmasters.mordor.domain.OrcRaceType;
+import com.progmasters.mordor.domain.WeaponType;
+import com.progmasters.mordor.dto.OrcDetails;
 import com.progmasters.mordor.dto.OrcListItem;
+import com.progmasters.mordor.exception.GlobalExceptionHandler;
+import com.progmasters.mordor.repository.OrcRepository;
 import com.progmasters.mordor.service.OrcService;
+import com.progmasters.mordor.service.OrcValidatorService;
+import com.progmasters.mordor.validator.OrcDetailsValidator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.MessageSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class OrcControllerTest {
-
-    @Autowired
-    private WebApplicationContext wac;
 
     private MockMvc mockMvc;
 
-    @Autowired
-    OrcService orcServiceMock;
+    @Mock
+    OrcRepository orcRepositoryMock;
+
+    @Mock
+    private OrcService orcServiceMock;
 
     @BeforeEach
-    public void setup() {
-        Mockito.reset(orcServiceMock);
+    public void setUp() {
+        OrcValidatorService orcValidatorService = new OrcValidatorService(orcRepositoryMock);
+        OrcDetailsValidator orcDetailsValidator = new OrcDetailsValidator(orcValidatorService);
 
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+        OrcController orcController = new OrcController(orcServiceMock, orcDetailsValidator);
+
+        mockMvc = MockMvcBuilders.standaloneSetup(orcController)
+                .setControllerAdvice(new GlobalExceptionHandler(messageSource()))
+                .build();
     }
 
     @AfterEach
@@ -71,25 +76,30 @@ public class OrcControllerTest {
 
     @Test
     public void testGetOrcList() throws Exception {
+        // given
         Orc orc1 = new Orc();
         orc1.setName("Varag");
         orc1.setOrcRaceType(OrcRaceType.MOUNTAIN);
+        orc1.setKillCount(100L);
 
         Orc orc2 = new Orc();
         orc2.setName("Urgarok");
         orc2.setOrcRaceType(OrcRaceType.URUK);
 
-        List<OrcListItem> orcs = Arrays.asList(orc1, orc2).stream()
+        List<OrcListItem> orcs = Stream.of(orc1, orc2)
                 .map(OrcListItem::new).collect(Collectors.toList());
 
+        // when
         when(orcServiceMock.listOrcs()).thenReturn(orcs);
 
+        // then
         this.mockMvc.perform(get("/api/orcs"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].name", is("Varag")))
                 .andExpect(jsonPath("$[0].orcRaceType", is("Mountain")))
+                .andExpect(jsonPath("$[0].killCount", is(100)))
                 .andExpect(jsonPath("$[1].name", is("Urgarok")))
                 .andExpect(jsonPath("$[1].orcRaceType", is("Uruk")));
 
@@ -97,12 +107,42 @@ public class OrcControllerTest {
         verifyNoMoreInteractions(orcServiceMock);
     }
 
-    @Configuration
-    static class TestConfiguration {
+    @Test
+    public void testPostOrcWithValidationError() throws Exception {
+        Orc orc = new Orc();
+        orc.setName("Varag");
+        orc.setOrcRaceType(OrcRaceType.MOUNTAIN);
+        orc.setWeapons(Arrays.asList(WeaponType.KNIFE, WeaponType.SHIELD));
+        orc.setKillCount(10000000L);
 
-        @Bean
-        public OrcService orcService() {
-            return Mockito.mock(OrcService.class);
+        OrcDetails orcDetails = new OrcDetails(orc);
+
+        this.mockMvc.perform(post("/api/orcs")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(orcDetails)))
+                .andExpect(status().is(400))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.fieldErrors", hasSize(1)))
+                .andExpect(jsonPath("$.fieldErrors[0].field", is("killCount")))
+                .andExpect(jsonPath("$.fieldErrors[0].message", is("Orcs must retire after killing half a thousand enemies")));
+
+        verifyNoInteractions(orcServiceMock);
+    }
+
+    private MessageSource messageSource() {
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+
+        messageSource.setBasename("messages");
+        messageSource.setUseCodeAsDefaultMessage(true);
+
+        return messageSource;
+    }
+
+    public static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

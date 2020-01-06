@@ -18,51 +18,78 @@ import com.progmasters.mordor.dto.OrcDetails;
 import com.progmasters.mordor.repository.OrcRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+@ExtendWith(MockitoExtension.class)
 public class OrcServiceTest {
 
     private OrcService orcService;
 
+    @Mock
     private OrcRepository orcRepositoryMock;
 
     @BeforeEach
     public void setUp() {
-        orcRepositoryMock = mock(OrcRepository.class);
         orcService = new OrcService(orcRepositoryMock);
     }
 
     @Test
-    public void testSavingOrc() {
+    public void testUpdateOrc() {
         // given
-        Orc orc = new Orc();
-        orc.setName("Varag");
-        orc.setOrcRaceType(OrcRaceType.MOUNTAIN);
-        orc.setWeapons(Arrays.asList(WeaponType.KNIFE, WeaponType.SHIELD));
-        orc.setKillCount(100L);
+        Orc originalOrc = new Orc("Varag", OrcRaceType.MOUNTAIN, 100L, List.of(WeaponType.KNIFE, WeaponType.BOW));
 
-        OrcDetails orcDetails = new OrcDetails(orc);
+        OrcDetails orcDetails = new OrcDetails();
+        orcDetails.setName("Updated varag");
+        orcDetails.setRaceType("MOUNTAIN");
+        orcDetails.setKillCount(null);
+        orcDetails.setWeapons(List.of("SWORD"));
 
-        // when
+        when(orcRepositoryMock.findById(1L)).thenReturn(Optional.of(originalOrc));
         when(orcRepositoryMock.save(any(Orc.class))).thenAnswer(returnsFirstArg());
-        //when(orcRepositoryMock.findOne(any(Long.class))).thenReturn(new Orc());
 
-        Orc savedOrc = orcService.saveOrc(orcDetails);
+        //when
+        Orc updatedOrc = orcService.updateOrc(orcDetails, 1L);
 
         // then
-        assertEquals(orc.getName(), savedOrc.getName());
-        assertEquals(orc.getOrcRaceType(), savedOrc.getOrcRaceType());
-        assertEquals(orc.getWeapons(), savedOrc.getWeapons());
-        assertEquals(orc.getKillCount(), savedOrc.getKillCount());
+        assertEquals("Updated varag", updatedOrc.getName());
+        assertEquals(OrcRaceType.MOUNTAIN, updatedOrc.getOrcRaceType());
+        assertEquals(List.of(WeaponType.SWORD), updatedOrc.getWeapons());
+        assertEquals(0, updatedOrc.getKillCount());
 
+        verify(orcRepositoryMock, times(1)).findById(1L);
         verify(orcRepositoryMock, times(1)).save(any(Orc.class));
+        verifyNoMoreInteractions(orcRepositoryMock);
+    }
+
+    @Test
+    public void testUpdateOrc_orcDoesntExist() {
+        //given
+        OrcDetails orcDetails = new OrcDetails();
+        orcDetails.setName("random ork");
+        orcDetails.setRaceType("MOUNTAIN");
+        orcDetails.setKillCount(20L);
+        orcDetails.setWeapons(List.of("SWORD", "BOW"));
+
+        when(orcRepositoryMock.findById(2L)).thenReturn(Optional.empty());
+
+        //when
+        Orc updatedOrc = orcService.updateOrc(orcDetails, 2L);
+
+        //then
+        assertNull(updatedOrc);
+
+        verify(orcRepositoryMock, times(1)).findById(2L);
         verifyNoMoreInteractions(orcRepositoryMock);
     }
 }
