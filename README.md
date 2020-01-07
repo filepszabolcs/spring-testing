@@ -1,22 +1,22 @@
 # Spring Testing (with  Spring Boot)
 
 Testing is an integral part of any software development project, be it an enterprise scale solution, or just a pet project.
-Good, conscious testing provides a lot of benefits. It  improves the quality of code, makes finding bugs easier and faster, simplifies integration and reduces the costs, just to name a few.
+Good, conscious testing provides a lot of benefits. It  improves the quality of code, makes finding bugs easier and faster, 
+simplifies integration and reduces costs, just to name a few.
 The Spring framework has exceptional support for both unit and integration testing.
 
 ## Unit testing
 
 A unit test covers a single _unit_ of  our application, where a unit is most commonly a single class. 
-Unit tests drive a method or a chain of methods in isolation, to ensure that they produce the expected output, (or side effect) given the appropriate inputs.
+Unit tests drive a method or a chain of methods in isolation, to ensure that they produce the expected output, (or side effect) 
+given the appropriate inputs.
 Unit tests runs in milliseconds, as they  don't need an application context. This greatly benefits the "test / code / test” flow TDD.
 
 ## Integration testing
 
-## Integration testing
-
-An integration test is one which covers multiple _units_,and test the interaction between two or more clusters of cohesive classes.
-In general, integration tests cover the whole path through an application. In these tests, we send a request to the application and check that it responds correctly
-Integration tests need an application context (or a slice of it) to work, and as such, they take longer to run. 
+An integration test is one which covers multiple _units_, and test the interaction between two or more clusters of cohesive classes.
+In general, integration tests cover the whole path through an application. In these tests, we send a request to the application and 
+check that it responds correctly. Integration tests need an application context (or a slice of it) to work, and as such, they take longer to run. 
 
 ## Testing by MVC layers
 
@@ -29,14 +29,15 @@ or we can create integration tests to check the interaction between two or more 
 
 ## Service and persistence integration testing
 
-This time, we are going to see how to create tests to check the interaction between the `service` and `persistence` layers of our application, but before we dive into the details,
-lets go over some of the basics. 
+This time, we are going to see how to create tests to check the interaction between the `service` and `persistence` layers of our application, 
+but before we dive into the details, lets go over some of the basics. 
 
 ### Folder and file structure
 
 Spring and Spring Boot don't have specific recommendations about the test classes layout. So instead, you should follow the conventions of your build tool.
-In case of maven, `src/test/java` is designed to contain test classes. You could have both unit and integration tests inside this directory and make the difference between them with a suffix
-: `Test` for unit tests and `IT` for integration tests, by convention. Lets see an example with an `OrcService` class. 
+In case of maven, `src/test/java` is designed to contain test classes. You could have both unit and integration tests inside this directory and 
+make the difference between them with a suffix: `Test` for unit tests and `IT` for integration tests, by convention. 
+Lets see an example with an `OrcService` class. 
 
 1. We place the test classes in the `src/test/java` directory, inside the `com.progmasters.mordor.service` package.
 2. We create an `OrcServiceTest` class for the unit tests.
@@ -51,16 +52,17 @@ As you can see, it is also a good practice to create a package structure that ma
  The latest major version is JUnit 5, and it is included in `spring-boot-starter-test` from version 2.2.x, so we don't have to manually add it to our _pom.xml_.
  JUnit 5 requires Java 8 or higher. 
  
- ### Anatomy of a test class
+### Anatomy of a test class
 
-After we create a test class, we can start writing test, and there is a conventional way to do that. 
+After we create a test class, we can start writing tests, and there is a conventional way to do that. 
 
 - First we add a field holding an instance of the class we are going to test, and we also need to provide the classes this class depends on.(Either by autowiring or mocking them - more on this later)
 - Tests methods are public and void, and they are named after the method they are meant to test, with a `test` prefix. Eg.: `testListOrcs`
 - Test methods are annotated with the `@Test` annotation
-- Initialization or teardown logic is placed in lifecycle methods with  `@BeforeEach` and `@AfterEach`.
+- Initialization and teardown logic is placed in lifecycle methods called `@BeforeEach` and `@AfterEach`.
 
 ### Example
+
 Let's see an example in action. 
 
 ```java
@@ -82,8 +84,8 @@ public class OrcServiceIT {
 
 - The `@ExtendWith(SpringExtension.class)` provides full integration between the Spring TestContext and the JUnit framework.
 - The `@DataJpaTest` annotation comes from Spring and initializes only a slice of the whole application context, which is responsible for data persistence.
-    - By default this annotation creates an empty, in memory database, and makes sure each test method runs in its own transaction, which is rolled back after the method. 
-    - This in memory database however requires a dependency to work, so the following has to be added to the _pom.xml_
+    - By default this annotation creates an empty, in-memory database, and makes sure each test method runs in its own transaction, which is rolled back after the method. 
+    - This in-memory database however requires a dependency to work, so the following has to be added to the _pom.xml_
     
 ````xml
         <dependency>
