@@ -12,7 +12,7 @@ Unit tests runs in milliseconds, as they  don't need an application context. Thi
 
 ## Integration testing
 
-##Integration testing
+## Integration testing
 
 An integration test is one which covers multiple _units_,and test the interaction between two or more clusters of cohesive classes.
 In general, integration tests cover the whole path through an application. In these tests, we send a request to the application and check that it responds correctly
@@ -60,7 +60,7 @@ After we create a test class, we can start writing test, and there is a conventi
 - Test methods are annotated with the `@Test` annotation
 - Initialization or teardown logic is placed in lifecycle methods with  `@BeforeEach` and `@AfterEach`.
 
-###Example
+### Example
 Let's see an example in action. 
 
 ```java
