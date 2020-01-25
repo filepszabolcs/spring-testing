@@ -9,24 +9,34 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(SpringExtension.class)
-@DataJpaTest
-public class OrcServiceIT {
+@SpringBootTest
+@Transactional
+@Rollback
+public class OrcServiceIT_1 {
 
     @Autowired
-    OrcRepository orcRepository;
     private OrcService orcService;
 
-    @BeforeEach
-    public void init() {
-        this.orcService = new OrcService(orcRepository);
+    @Test
+    public void testEmptyOrcList() {
+        //given
+
+        //when
+        List<OrcListItem> orcList = orcService.listOrcs();
+
+        //then
+        assertEquals(0, orcList.size());
+
     }
 
     @Test

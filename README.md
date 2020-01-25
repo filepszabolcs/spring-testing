@@ -18,7 +18,7 @@ An integration test is one which covers multiple _units_, and test the interacti
 In general, integration tests cover the whole path through an application. In these tests, we send a request to the application and 
 check that it responds correctly. Integration tests need an application context (or a slice of it) to work, and as such, they take longer to run. 
 
-## Testing by MVC layers
+## Testing by layers
 
 We can also distinguish our tests by application layer, and we can either write unit tests checking the functionality of one layer in isolation,
 or we can create integration tests to check the interaction between two or more layers, which are: 
@@ -34,8 +34,7 @@ but before we dive into the details, lets go over some of the basics.
 
 ### Folder and file structure
 
-Spring and Spring Boot don't have specific recommendations about the test classes layout. So instead, you should follow the conventions of your build tool.
-In case of maven, `src/test/java` is designed to contain test classes. You could have both unit and integration tests inside this directory and 
+In case of maven, `src/test/java` is designed to contain test classes. You could have both unit and integration tests inside this directory and
 make the difference between them with a suffix: `Test` for unit tests and `IT` for integration tests, by convention. 
 Lets see an example with an `OrcService` class. 
 
@@ -57,45 +56,28 @@ As you can see, it is also a good practice to create a package structure that ma
 After we create a test class, we can start writing tests, and there is a conventional way to do that. 
 
 - First we add a field holding an instance of the class we are going to test, and we also need to provide the classes this class depends on.(Either by autowiring or mocking them - more on this later)
-- Tests methods are public and void, and they are named after the method they are meant to test, with a `test` prefix. Eg.: `testListOrcs`
+- Tests methods are **public** and **void**, and they are named after the method they are meant to test, with a `test` prefix. Eg.: `testListOrcs`
 - Test methods are annotated with the `@Test` annotation
 - Initialization and teardown logic is placed in lifecycle methods called `@BeforeEach` and `@AfterEach`.
 
-### Example
+### Example 1 - Integration tests for Service and Repository layers - OrcServiceIT.java
 
 Let's see an example in action. 
 
+- We add an `@Autowired` to OrcService itself:
+
 ```java
-@ExtendWith(SpringExtension.class)
-@DataJpaTest
+@SpringBootTest
+@Transaction
+@Rollback
 public class OrcServiceIT {
 
     @Autowired
-    OrcRepository orcRepository;
     private OrcService orcService;
-
-    @BeforeEach
-    public void init() {
-        this.orcService = new OrcService(orcRepository);
-    }
 
 }
 ```
 
-- The `@ExtendWith(SpringExtension.class)` provides full integration between the Spring TestContext and the JUnit framework.
-- The `@DataJpaTest` annotation comes from Spring and initializes only a slice of the whole application context, which is responsible for data persistence.
-    - By default this annotation creates an empty, in-memory database, and makes sure each test method runs in its own transaction, which is rolled back after the method. 
-    - This in-memory database however requires a dependency to work, so the following has to be added to the _pom.xml_
-    
-````xml
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.4.197</version>
-        </dependency>
-````
-
-- We add an `@Autowired` OrcRepository field and the OrcService itself, which is instantiated in the _init()_ method, annotated with `@BeforeEach`
 
 ```java
     @Test
@@ -121,7 +103,7 @@ public class OrcServiceIT {
 
         //then
          assertEquals(2, orcList.size());
-        
+
         assertEquals("tibork",orcList.get(0).getName());
         assertEquals(50L, orcList.get(0).getKillCount());
         assertEquals("Mountain",orcList.get(0).getOrcRaceType());
@@ -136,10 +118,50 @@ public class OrcServiceIT {
     }
 ```
 
-- The test method is annotated with `@Test`, and it consists of three parts: 
+- The test method is annotated with `@Test`, and it consists of three parts:
     - `given` : This is where we set up our tests, create the required dto instances, etc...
     - `when`: This is where we invoke the function that we wish to test
     - `then`: This is where we examine the result and side effects of the invoked function and make assertions
-    
+
 - The `assertion` functions decide if the test passes or fails. They are provided by the JUnit framework.
 
+#### In-memory database
+
+ - Checkout the second yml file under /src/**test**/resources/application.yml
+ - Database settings are overriden and H2 in-memory database system is used. It only exists during the test execution.
+
+````yml
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+````
+
+ - You should add maven dependency as well:
+````xml
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.197</version>
+        </dependency>
+````
+
+### Example 2 - Test only JPA Repository layer - OrcRepositoryTest.java
+
+- The `@ExtendWith(SpringExtension.class)` provides full integration between the Spring TestContext and the JUnit framework.
+- The `@DataJpaTest` annotation comes from Spring and initializes only a slice of the whole application context, which is responsible for data persistence.
+    - By default this annotation creates an empty, in-memory database, and makes sure each test method runs in its own transaction, which is rolled back after the method. 
+    - This in-memory database however requires a dependency to work, so the following has to be added to the _pom.xml_
+
+
+
+
+## See also
+Short, useful and uptodate documentation about Spring Boot Testing:
+https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-testing
