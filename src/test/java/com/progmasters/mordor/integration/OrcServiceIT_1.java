@@ -19,7 +19,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest
+@SpringBootTest()
 @Transactional
 @Rollback
 public class OrcServiceIT_1 {
@@ -40,7 +40,7 @@ public class OrcServiceIT_1 {
     }
 
     @Test
-    public void testListOrcs() {
+    public void testListOrcs_withTwoOrc() {
         //given
         OrcDetails firstOrcDetails = new OrcDetails();
         firstOrcDetails.setName("tibork");
@@ -74,6 +74,31 @@ public class OrcServiceIT_1 {
         assertEquals("Uruk", orcList.get(1).getOrcRaceType());
         assertEquals(1, orcList.get(1).getWeapons().size());
         assertTrue(orcList.get(1).getWeapons().contains("Sword"));
+    }
+
+    @Test
+    public void testListOrcs_withOneOrc() {
+        //given
+        OrcDetails firstOrcDetails = new OrcDetails();
+        firstOrcDetails.setName("tibork");
+        firstOrcDetails.setKillCount(50L);
+        firstOrcDetails.setRaceType("MOUNTAIN");
+        firstOrcDetails.setWeapons(List.of("KNIFE", "BOW"));
+
+
+        orcService.saveOrc(firstOrcDetails);
+
+        //when
+        List<OrcListItem> orcList = orcService.listOrcs();
+
+        //then
+        assertEquals(1, orcList.size());
+
+        assertEquals("tibork", orcList.get(0).getName());
+        assertEquals(50L, orcList.get(0).getKillCount());
+        assertEquals("Mountain", orcList.get(0).getOrcRaceType());
+        assertEquals(2, orcList.get(0).getWeapons().size());
+        assertTrue(orcList.get(0).getWeapons().contains("Knife"));
     }
 
 }
