@@ -1,5 +1,6 @@
 package com.progmasters.mordor.integration;
 
+import com.progmasters.mordor.MordorApplication;
 import com.progmasters.mordor.dto.OrcDetails;
 import com.progmasters.mordor.dto.OrcListItem;
 import com.progmasters.mordor.repository.OrcRepository;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
@@ -19,9 +21,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest()
+@SpringBootTest
 @Transactional
 @Rollback
+@AutoConfigureTestDatabase
 public class OrcServiceIT_1 {
 
     @Autowired
