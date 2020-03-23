@@ -1,6 +1,11 @@
+# Testing
+
+1. Spring Testing (with Spring Boot)
+2. Selenium UI testing
+
 # Spring Testing (with Spring Boot)
 
-## Intro
+### Intro
 
 Testing is an integral part of any software development project, be it an enterprise scale solution, or just a pet project. Good, conscious testing provides a lot of benefits. It  improves the quality of code, makes finding bugs easier and faster,  simplifies integration and reduces costs, just to name a few. The Spring framework has exceptional support for both unit and integration testing.
 
@@ -14,11 +19,12 @@ An integration test is one which covers multiple _units_, and test the interacti
 
 ### Testing by layers
 
-We can also distinguish our tests by application layer, and we can either write unit tests checking the functionality of one layer in isolation, or we can create integration tests to check the interaction between two or more layers, which are: 
+We can also distinguish our tests by application layer, and we can either write unit tests checking the functionality of one layer in isolation, or we can create integration tests to check the interaction between two or more layers, which are:
 
-- Persistence layer
-- Service layer
+Backend:
 - Controller layer
+- Service layer
+- Persistence layer
 
 ### Folder and file structure
 
@@ -232,10 +238,17 @@ public class OrcRepositoryTest {
 
 Keep in mind, that there is no point to test such queries and methods provided by the framework itself. However it might come handy, to write tests against your own custom queries. 
 
-# See also
+## See also
 
 - [Short, useful and up-to-date documentation about Spring Boot Testing](https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-testing)
 - [Mockito When/Then Cookbook](https://www.baeldung.com/mockito-behavior)
 - [Mockito Verify Cookbook](https://www.baeldung.com/mockito-verify)
 - [Don't use in-memory db in tests](https://phauer.com/2017/dont-use-in-memory-databases-tests-h2/) 
 
+# Selenium
+
+  https://www.selenium.dev/
+
+  WebDriver
+
+  TODO...
