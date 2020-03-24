@@ -24,6 +24,7 @@ public class OrcListTest {
         System.setProperty("webdriver.chrome.driver", classLoader.getResource("mac/chromedriver").getFile());
 
         ChromeOptions options = new ChromeOptions();
+        options.addArguments("--window-size=1920,1200"); //fix chrome size
 //        options.addArguments("--headless", "--disable-gpu", "--window-size=1920,1200","--ignore-certificate-errors"); //uncomment this to run tests in the background
         driver = new ChromeDriver(options);
     }
@@ -36,7 +37,7 @@ public class OrcListTest {
         String title = driver.findElement(By.cssSelector("body > app-root > div > app-orc-form > div > h3")).getAttribute("innerHTML");
         assertEquals(title, "Orc form");
 
-        //driver.findElement(By.cssSelector("button.navbar-toggler")).click();
+        //driver.findElement(By.cssSelector("button.navbar-toggler")).click();  //if sandwitch icon is in the header
         driver.findElement(By.cssSelector("input[name='name']")).sendKeys("Dwarf slayer " + System.currentTimeMillis());
         driver.findElement(By.cssSelector("input[name='killCount']")).sendKeys("10");
         new Select(driver.findElement(By.cssSelector("select[name='raceType']"))).selectByVisibleText("Uruk");
