@@ -1,30 +1,33 @@
 package com.progmasters.mordor.selenium.test;
 
-import com.progmasters.mordor.selenium.environment.EnvironmentManager;
-import com.progmasters.mordor.selenium.environment.RunEnvironment;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 public class OrcListTest {
+    private WebDriver driver;
 
     @BeforeEach
     public void startBrowser() {
-        EnvironmentManager.initWebDriver();
+        ClassLoader classLoader = OrcListTest.class.getClassLoader();
+//        System.setProperty("webdriver.chrome.driver", classLoader.getResource("win/chromedriver.exe").getFile());
+//        System.setProperty("webdriver.chrome.driver", classLoader.getResource("linux/chromedriver").getFile());
+        System.setProperty("webdriver.chrome.driver", classLoader.getResource("mac/chromedriver").getFile());
+//        System.setProperty("webdriver.chrome.driver", "mac/chromedriver");
+
+        driver = new ChromeDriver();
     }
 
     @Test
     public void demo() {
-        WebDriver driver = RunEnvironment.getWebDriver();
-
-
         driver.get("http://localhost:4200/orc-list");
 
         driver.findElement(By.cssSelector("a[href='/orc-form']")).click();
@@ -64,6 +67,6 @@ public class OrcListTest {
 
     @AfterEach
     public void tearDown() {
-        EnvironmentManager.shutDownDriver();
+        driver.quit();
     }
 }
