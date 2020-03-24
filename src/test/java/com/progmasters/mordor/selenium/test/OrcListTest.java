@@ -18,12 +18,14 @@ public class OrcListTest {
     @BeforeEach
     public void startBrowser() {
         ClassLoader classLoader = OrcListTest.class.getClassLoader();
+        //TODO: uncomment your platform: win/mac/linux (choose only one)
 //        System.setProperty("webdriver.chrome.driver", classLoader.getResource("win/chromedriver.exe").getFile());
 //        System.setProperty("webdriver.chrome.driver", classLoader.getResource("linux/chromedriver").getFile());
         System.setProperty("webdriver.chrome.driver", classLoader.getResource("mac/chromedriver").getFile());
-//        System.setProperty("webdriver.chrome.driver", "mac/chromedriver");
 
-        driver = new ChromeDriver();
+        ChromeOptions options = new ChromeOptions();
+//        options.addArguments("--headless", "--disable-gpu", "--window-size=1920,1200","--ignore-certificate-errors"); //uncomment this to run tests in the background
+        driver = new ChromeDriver(options);
     }
 
     @Test

@@ -247,8 +247,18 @@ Keep in mind, that there is no point to test such queries and methods provided b
 
 # Selenium
 
-  https://www.selenium.dev/
+Main webpage: https://www.selenium.dev/
 
-  WebDriver
+Tools:
+1. Selenium IDE: You can record your clicks and inputs and play it after. Cool stuff!
+2. WebDriver: You can write Java programs to control the browser with the help of WebDriver API
+3. Selenium Grid: You can run your tests on several computers parallel
 
-  TODO...
+
+## Headless mode - running Selenium tests in the background
+
+ ```java
+ChromeOptions options = new ChromeOptions();
+options.addArguments("--headless", "--disable-gpu", "--window-size=1920,1200","--ignore-certificate-errors");
+driver = new ChromeDriver(options);
+```
