@@ -52,7 +52,7 @@ public class OrcControllerTest {
     private MockMvc mockMvc;
 
     @Mock
-    OrcRepository orcRepositoryMock;
+    private OrcRepository orcRepositoryMock;
 
     @Mock
     private OrcService orcServiceMock;
